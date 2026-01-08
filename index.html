@@ -1,1 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>TestimAI</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
 
+<div class="app">
+  <div class="sidebar">
+    <h2>TestimAI</h2>
+    <button onclick="newChat()">+ New Chat</button>
+  </div>
+
+  <div class="chat-container">
+    <div id="chat"></div>
+
+    <div class="input-box">
+      <input id="message" placeholder="Send a message..." />
+      <button onclick="sendMessage()">Send</button>
+    </div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
