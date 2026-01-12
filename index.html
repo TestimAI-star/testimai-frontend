@@ -15,22 +15,34 @@
     <button class="new-chat" onclick="newChat()">+ New chat</button>
   </aside>
 
-  <!-- Main chat area -->
-  <main class="chat-area">
-    <div id="chat" class="chat"></div>
+ <main class="chat-area">
 
-    <div class="input-area">
-      <input 
-        id="message" 
-        placeholder="Send a message…" 
-        onkeydown="if(event.key==='Enter') sendMessage()"
+  <!-- Welcome Screen -->
+  <div id="welcome" class="welcome">
+    <h1>TestimAI</h1>
+    <p>What can I help you with?</p>
+
+    <div class="welcome-input">
+      <input
+        id="first-message"
+        placeholder="Send a message…"
+        onkeydown="if(event.key==='Enter') sendFirstMessage()"
       />
-      <button onclick="sendMessage()">➤</button>
+      <button onclick="sendFirstMessage()">➤</button>
     </div>
-  </main>
+  </div>
 
-</div>
+  <!-- Chat Messages -->
+  <div id="chat" class="chat hidden"></div>
 
-<script src="script.js"></script>
-</body>
-</html>
+  <!-- Bottom Input -->
+  <div id="input-area" class="input-area hidden">
+    <input
+      id="message"
+      placeholder="Send a message…"
+      onkeydown="if(event.key==='Enter') sendMessage()"
+    />
+    <button onclick="sendMessage()">➤</button>
+  </div>
+
+</main>
