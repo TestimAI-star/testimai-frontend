@@ -1,36 +1,43 @@
-const API_URL = "https://testimai-backend.onrender.com/chat";
+const API_URL = "https://YOUR_RENDER_API_URL/chat";
 
-let userId = localStorage.getItem("user_id") || Date.now();
-localStorage.setItem("user_id", userId);
+let userId = localStorage.getItem("user_id");
+if (!userId) {
+  userId = crypto.randomUUID();
+  localStorage.setItem("user_id", userId);
+}
 
 function addMessage(text, sender) {
   const chat = document.getElementById("chat");
   const div = document.createElement("div");
   div.className = `message ${sender}`;
-  div.innerText = text;
+  div.textContent = text;
   chat.appendChild(div);
   chat.scrollTop = chat.scrollHeight;
 }
 
 async function sendMessage() {
   const input = document.getElementById("message");
-  const text = input.value;
+  const text = input.value.trim();
   if (!text) return;
 
   addMessage(text, "user");
   input.value = "";
 
-  const res = await fetch(API_URL, {
-    method: "POST",
-    headers: {"Content-Type": "application/json"},
-    body: JSON.stringify({
-      message: text,
-      user_id: userId
-    })
-  });
+  try {
+    const res = await fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        message: text,
+        user_id: userId
+      })
+    });
 
-  const data = await res.json();
-  addMessage(data.reply, "ai");
+    const data = await res.json();
+    addMessage(data.reply, "ai");
+  } catch (err) {
+    addMessage("Something went wrong. Try again.", "ai");
+  }
 }
 
 function newChat() {
