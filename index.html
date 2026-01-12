@@ -1,48 +1,21 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <title>TestimAI</title>
-  <link rel="stylesheet" href="style.css" />
+  <title>TestimAI Chat</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div class="app">
+<div class="chat-container">
+  <div id="messages"></div>
 
-  <!-- Sidebar -->
-  <aside class="sidebar">
-    <div class="logo">TestimAI</div>
-    <button class="new-chat" onclick="newChat()">+ New chat</button>
-  </aside>
-
- <main class="chat-area">
-
-  <!-- Welcome Screen -->
-  <div id="welcome" class="welcome">
-    <h1>TestimAI</h1>
-    <p>What can I help you with?</p>
-
-    <div class="welcome-input">
-      <input
-        id="first-message"
-        placeholder="Send a message…"
-        onkeydown="if(event.key==='Enter') sendFirstMessage()"
-      />
-      <button onclick="sendFirstMessage()">➤</button>
-    </div>
+  <div class="input-bar">
+    <input type="file" id="imageInput" accept="image/*">
+    <input id="textInput" placeholder="Message TestimAI..." />
+    <button onclick="send()">Send</button>
   </div>
+</div>
 
-  <!-- Chat Messages -->
-  <div id="chat" class="chat hidden"></div>
-
-  <!-- Bottom Input -->
-  <div id="input-area" class="input-area hidden">
-    <input
-      id="message"
-      placeholder="Send a message…"
-      onkeydown="if(event.key==='Enter') sendMessage()"
-    />
-    <button onclick="sendMessage()">➤</button>
-  </div>
-
-</main>
+<script src="script.js"></script>
+</body>
+</html>
