@@ -8,19 +8,27 @@
 <body>
 
 <div class="app">
-  <div class="sidebar">
-    <h2>TestimAI</h2>
-    <button onclick="newChat()">+ New Chat</button>
-  </div>
 
-  <div class="chat-container">
-    <div id="chat"></div>
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="logo">TestimAI</div>
+    <button class="new-chat" onclick="newChat()">+ New chat</button>
+  </aside>
 
-    <div class="input-box">
-      <input id="message" placeholder="Send a message..." />
-      <button onclick="sendMessage()">Send</button>
+  <!-- Main chat area -->
+  <main class="chat-area">
+    <div id="chat" class="chat"></div>
+
+    <div class="input-area">
+      <input 
+        id="message" 
+        placeholder="Send a message…" 
+        onkeydown="if(event.key==='Enter') sendMessage()"
+      />
+      <button onclick="sendMessage()">➤</button>
     </div>
-  </div>
+  </main>
+
 </div>
 
 <script src="script.js"></script>
