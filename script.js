@@ -1,3 +1,7 @@
+const token = localStorage.getItem("token");
+if (!token) {
+  window.location.href = "login.html";
+}
 const API_URL = "https://testimai-frontend.onrender.com/chat";
 
 let userId = localStorage.getItem("user_id");
