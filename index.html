@@ -1,17 +1,22 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>TestimAI Chat</title>
+  <title>TestimAI</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <div class="chat-container">
+  <div id="welcome">
+    <h1>TestimAI</h1>
+    <p>Ask anything. Detect scams. Solve problems.</p>
+  </div>
+
   <div id="messages"></div>
 
   <div class="input-bar">
-    <input type="file" id="imageInput" accept="image/*">
-    <input id="textInput" placeholder="Message TestimAI..." />
+    <input type="file" id="imageInput" />
+    <input id="textInput" placeholder="Message TestimAI…" />
     <button onclick="send()">Send</button>
   </div>
 </div>
