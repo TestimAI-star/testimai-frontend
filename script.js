@@ -1,4 +1,4 @@
-const API_URL = "https://testimai-frontend.onrender/chat";
+const API_URL = "https://testimai-frontend.onrender.com/chat";
 
 let userId = localStorage.getItem("user_id");
 if (!userId) {
