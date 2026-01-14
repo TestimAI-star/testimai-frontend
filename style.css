@@ -87,13 +87,14 @@ body {
   border-top: 1px solid #1e293b;
 }
 
-.input-wrapper input {
-  flex: 1;
-  padding: 12px;
-  background: #020617;
+.plus-btn {
+  background: transparent;
+  color: #e5e7eb;
+  font-size: 22px;
   border: 1px solid #1e293b;
-  border-radius: 8px;
-  color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
 }
 
 .send-btn, .icon-btn {
