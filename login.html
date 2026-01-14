@@ -1,1 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Login – TestimAI</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="login-body">
 
+<div class="login-box">
+  <h2>Sign in to continue</h2>
+
+  <input id="email" type="email" placeholder="Email">
+  <input id="password" type="password" placeholder="Password">
+
+  <button onclick="login()">Login</button>
+  <button class="secondary" onclick="signup()">Sign up</button>
+</div>
+
+<script>
+const API = "https://YOUR_RENDER_URL";
+
+async function login() {
+  const res = await fetch(`${API}/auth/login`, {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({
+      email: email.value,
+      password: password.value
+    })
+  });
+
+  const data = await res.json();
+  localStorage.setItem("token", data.token);
+  parent.hideLoginModal();
+}
+
+async function signup() {
+  const res = await fetch(`${API}/auth/signup`, {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({
+      email: email.value,
+      password: password.value
+    })
+  });
+
+  const data = await res.json();
+  localStorage.setItem("token", data.token);
+  parent.hideLoginModal();
+}
+</script>
+
+</body>
+</html>
