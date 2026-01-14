@@ -61,6 +61,14 @@ body {
   border-bottom: 1px solid #1e293b;
 }
 
+.disclaimer {
+  font-size: 12px;
+  color: #94a3b8;
+  text-align: center;
+  padding-bottom: 10px;
+}
+
+
 .messages {
   flex: 1;
   padding: 24px;
