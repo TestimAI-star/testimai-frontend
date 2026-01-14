@@ -1,66 +1,158 @@
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: #0f172a;
-  color: white;
+* {
+  box-sizing: border-box;
+  font-family: Inter, system-ui, sans-serif;
 }
 
-.chat-container {
+body {
+  margin: 0;
+  background: #0f172a;
+  color: #e5e7eb;
+}
+
+.app {
   display: flex;
-  flex-direction: column;
   height: 100vh;
 }
 
-#welcome {
-  text-align: center;
-  margin-top: 30vh;
-}
-
-#messages {
-  flex: 1;
-  padding: 20px;
-  overflow-y: auto;
-}
-
-.message {
-  margin-bottom: 12px;
-}
-
-.user { color: #38bdf8; }
-.ai { color: #a7f3d0; }
-
-.input-bar {
+/* SIDEBAR */
+.sidebar {
+  width: 260px;
+  background: #020617;
+  padding: 16px;
   display: flex;
-  gap: 10px;
-  padding: 15px;
-  border-top: 1px solid #1e293b;
+  flex-direction: column;
 }
 
-input[type="text"], input[type="password"], input {
-  flex: 1;
+.logo {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.new-chat {
+  background: #1f2937;
+  color: white;
+  border: none;
   padding: 10px;
-  border-radius: 6px;
-  border: none;
-}
-
-button {
-  padding: 10px 16px;
-  border: none;
-  background: #22c55e;
   border-radius: 6px;
   cursor: pointer;
 }
 
-.login-box {
-  background: #020617;
-  padding: 30px;
-  border-radius: 10px;
-  width: 300px;
+.chat-history {
+  flex: 1;
+  margin-top: 20px;
+  overflow-y: auto;
 }
 
-.center {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
+.sidebar-footer {
+  font-size: 12px;
+  opacity: 0.6;
 }
+
+/* CHAT */
+.chat-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-header {
+  padding: 16px;
+  border-bottom: 1px solid #1e293b;
+}
+
+.messages {
+  flex: 1;
+  padding: 24px;
+  overflow-y: auto;
+}
+
+.message {
+  margin-bottom: 16px;
+  max-width: 700px;
+}
+
+.user {
+  color: #38bdf8;
+}
+
+.assistant {
+  color: #e5e7eb;
+}
+
+.input-wrapper {
+  display: flex;
+  gap: 8px;
+  padding: 16px;
+  border-top: 1px solid #1e293b;
+}
+
+.input-wrapper input {
+  flex: 1;
+  padding: 12px;
+  background: #020617;
+  border: 1px solid #1e293b;
+  border-radius: 8px;
+  color: white;
+}
+
+.send-btn, .icon-btn {
+  background: #22c55e;
+  border: none;
+  padding: 12px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+/* MODAL */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+}
+
+.modal iframe {
+  width: 400px;
+  height: 300px;
+  margin: auto;
+  display: block;
+  margin-top: 20vh;
+  border-radius: 12px;
+  border: none;
+}
+
+.hidden {
+  display: none;
+}
+
+/* LOGIN */
+.login-body {
+  background: #020617;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-box {
+  background: #020617;
+  padding: 24px;
+  border-radius: 12px;
+  width: 100%;
+}
+
+.login-box input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 14px;
+}
+
+.login-box button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 8px;
+}
+
+.secondary {
+  background: #1f2937;
+}
+
