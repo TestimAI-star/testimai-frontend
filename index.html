@@ -1,62 +1,46 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
   <title>TestimAI</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<!-- =========================
-     CHAT CONTAINER
-========================= -->
 <div class="chat-container">
+
+  <!-- Welcome -->
   <div id="welcome">
     <h1>TestimAI</h1>
     <p>Ask anything. Detect scams. Solve problems.</p>
   </div>
 
+  <!-- Messages -->
   <div id="messages"></div>
 
+  <!-- Input -->
   <div class="input-bar">
-    <input type="file" id="imageInput" accept="image/*" />
+    <label for="imageInput">📎</label>
+    <input type="file" id="imageInput" />
     <input id="textInput" placeholder="Message TestimAI…" />
-    <button onclick="send()">Send</button>
+    <button onclick="send()">➤</button>
   </div>
 </div>
 
-<!-- =========================
-     LOGIN / SIGNUP MODAL
-========================= -->
-<div id="loginModal" class="modal" style="display: none;">
+<!-- LOGIN MODAL -->
+<div id="loginModal" class="modal" style="display:none;">
   <div class="modal-box">
-    <h2>Sign in to continue</h2>
+    <h2>Continue with TestimAI</h2>
 
-    <input
-      type="email"
-      id="email"
-      placeholder="Email"
-      autocomplete="username"
-    />
-
-    <input
-      type="password"
-      id="password"
-      placeholder="Password"
-      autocomplete="current-password"
-    />
+    <input id="email" type="email" placeholder="Email" />
+    <input id="password" type="password" placeholder="Password" />
 
     <div class="modal-actions">
-      <button onclick="login()">Login</button>
+      <button onclick="login()">Log in</button>
       <button onclick="signup()">Sign up</button>
     </div>
   </div>
 </div>
 
-<!-- =========================
-     SCRIPTS
-========================= -->
 <script src="script.js"></script>
-
 </body>
 </html>
