@@ -1,11 +1,15 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8" />
   <title>TestimAI</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
+<!-- =========================
+     CHAT CONTAINER
+========================= -->
 <div class="chat-container">
   <div id="welcome">
     <h1>TestimAI</h1>
@@ -15,12 +19,44 @@
   <div id="messages"></div>
 
   <div class="input-bar">
-    <input type="file" id="imageInput" />
+    <input type="file" id="imageInput" accept="image/*" />
     <input id="textInput" placeholder="Message TestimAI…" />
     <button onclick="send()">Send</button>
   </div>
 </div>
 
+<!-- =========================
+     LOGIN / SIGNUP MODAL
+========================= -->
+<div id="loginModal" class="modal" style="display: none;">
+  <div class="modal-box">
+    <h2>Sign in to continue</h2>
+
+    <input
+      type="email"
+      id="email"
+      placeholder="Email"
+      autocomplete="username"
+    />
+
+    <input
+      type="password"
+      id="password"
+      placeholder="Password"
+      autocomplete="current-password"
+    />
+
+    <div class="modal-actions">
+      <button onclick="login()">Login</button>
+      <button onclick="signup()">Sign up</button>
+    </div>
+  </div>
+</div>
+
+<!-- =========================
+     SCRIPTS
+========================= -->
 <script src="script.js"></script>
+
 </body>
 </html>
