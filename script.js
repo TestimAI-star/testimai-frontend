@@ -54,3 +54,11 @@ function hideLoginModal() {
   loginModal.classList.add("hidden");
 }
 
+textInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter" && !e.shiftKey) {
+    e.preventDefault();
+    send();
+  }
+});
+
+
