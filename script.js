@@ -1,32 +1,39 @@
-const API = "https://testimai-frontend.onrender.com";
-const token = localStorage.getItem("token");
+const API = "https://YOUR_RENDER_URL";
+let guestId = localStorage.getItem("guest_id");
 
-if (!token) {
-  window.location.href = "login.html";
+if (!guestId) {
+  guestId = crypto.randomUUID();
+  localStorage.setItem("guest_id", guestId);
 }
 
-const messages = document.getElementById("messages");
-const welcome = document.getElementById("welcome");
-
 async function send() {
-  const text = textInput.value;
-  if (!text) return;
+  const input = document.getElementById("textInput");
+  const msg = input.value.trim();
+  if (!msg) return;
 
-  welcome.style.display = "none";
+  input.value = "";
+  addMessage("user", msg);
 
-  messages.innerHTML += `<div class="message user">You: ${text}</div>`;
-  textInput.value = "";
+  const token = localStorage.getItem("token");
 
-  const res = await fetch(API + "/chat", {
+  const res = await fetch(`${API}/chat`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "Authorization": "Bearer " + token
+      ...(token && { Authorization: `Bearer ${token}` })
     },
-    body: JSON.stringify({ message: text })
+    body: JSON.stringify({
+      message: msg,
+      guest_id: guestId
+    })
   });
 
   const data = await res.json();
-  messages.innerHTML += `<div class="message ai">TestimAI: ${data.reply}</div>`;
-  messages.scrollTop = messages.scrollHeight;
+
+  if (data.auth_required) {
+    showLoginModal();
+    return;
+  }
+
+  addMessage("assistant", data.reply);
 }
