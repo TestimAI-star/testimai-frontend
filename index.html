@@ -1,44 +1,57 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8" />
   <title>TestimAI</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-<div class="chat-container">
+<div class="app">
 
-  <!-- Welcome -->
-  <div id="welcome">
-    <h1>TestimAI</h1>
-    <p>Ask anything. Detect scams. Solve problems.</p>
-  </div>
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="logo">
+      🧠 TestimAI
+    </div>
 
-  <!-- Messages -->
-  <div id="messages"></div>
+    <button class="new-chat">+ New chat</button>
 
-  <!-- Input -->
-  <div class="input-bar">
-    <label for="imageInput">📎</label>
-    <input type="file" id="imageInput" />
-    <input id="textInput" placeholder="Message TestimAI…" />
-    <button onclick="send()">➤</button>
-  </div>
+    <div class="chat-history">
+      <!-- later populated -->
+    </div>
+
+    <div class="sidebar-footer">
+      <span>Free</span>
+    </div>
+  </aside>
+
+  <!-- MAIN CHAT -->
+  <main class="chat-area">
+    <div class="chat-header">
+      <span>TestimAI</span>
+    </div>
+
+    <div id="messages" class="messages">
+      <div class="assistant intro">
+        <h1>What can I help with?</h1>
+      </div>
+    </div>
+
+    <div class="input-wrapper">
+      <input type="file" id="imageInput" hidden />
+      <button class="icon-btn" onclick="document.getElementById('imageInput').click()">📎</button>
+
+      <input id="textInput" placeholder="Ask anything…" />
+      <button class="send-btn" onclick="send()">⬆</button>
+    </div>
+  </main>
+
 </div>
 
 <!-- LOGIN MODAL -->
-<div id="loginModal" class="modal" style="display:none;">
-  <div class="modal-box">
-    <h2>Continue with TestimAI</h2>
-
-    <input id="email" type="email" placeholder="Email" />
-    <input id="password" type="password" placeholder="Password" />
-
-    <div class="modal-actions">
-      <button onclick="login()">Log in</button>
-      <button onclick="signup()">Sign up</button>
-    </div>
-  </div>
+<div id="loginModal" class="modal hidden">
+  <iframe src="login.html"></iframe>
 </div>
 
 <script src="script.js"></script>
