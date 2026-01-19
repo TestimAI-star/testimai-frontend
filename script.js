@@ -6,16 +6,37 @@ if (!guestId) {
   localStorage.setItem("guest_id", guestId);
 }
 
+/* -------------------------
+   UI HELPERS
+-------------------------- */
 function addMessage(role, text) {
+  const messages = document.getElementById("messages");
+
   const div = document.createElement("div");
-  div.className = `message ${role}`;
+  div.className = role;
   div.innerText = text;
+
   messages.appendChild(div);
   messages.scrollTop = messages.scrollHeight;
 }
 
+function showLoginModal() {
+  document.getElementById("loginModal").classList.remove("hidden");
+}
+
+function hideLoginModal() {
+  document.getElementById("loginModal").classList.add("hidden");
+}
+
+function enableUpgradeUI() {
+  document.querySelector(".upgrade-btn").classList.remove("hidden");
+}
+
+/* -------------------------
+   SEND MESSAGE
+-------------------------- */
 async function send() {
-  const input = textInput;
+  const input = document.getElementById("textInput");
   const msg = input.value.trim();
   if (!msg) return;
 
@@ -46,19 +67,33 @@ async function send() {
   addMessage("assistant", data.reply);
 }
 
-function showLoginModal() {
-  loginModal.classList.remove("hidden");
-}
+/* -------------------------
+   ENTER KEY SUPPORT
+-------------------------- */
+const textarea = document.getElementById("textInput");
 
-function hideLoginModal() {
-  loginModal.classList.add("hidden");
-}
-
-textInput.addEventListener("keydown", (e) => {
+textarea.addEventListener("keydown", (e) => {
   if (e.key === "Enter" && !e.shiftKey) {
     e.preventDefault();
     send();
   }
 });
 
+/* -------------------------
+   LOGIN SUCCESS HANDLER
+   (called from login.html)
+-------------------------- */
+window.addEventListener("message", (e) => {
+  if (e.data?.token) {
+    localStorage.setItem("token", e.data.token);
+    hideLoginModal();
+    enableUpgradeUI();
+  }
+});
 
+/* -------------------------
+   UPGRADE
+-------------------------- */
+function goToUpgrade() {
+  alert("Upgrade coming soon (Paystack / Flutterwave)");
+}
