@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <title>TestimAI</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -11,70 +12,48 @@
 
   <!-- SIDEBAR -->
   <aside class="sidebar">
-
-    <div class="logo">
-      <img src="logo-ta.png" alt="TestimAI" class="app-logo" />
-      <span>TestimAI</span>
-    </div>
+    <div class="logo">🧠 TestimAI</div>
 
     <button class="new-chat">+ New chat</button>
 
-    <div class="chat-history">
-      <!-- later populated -->
-    </div>
+    <div class="chat-history"></div>
 
-    <div class="sidebar-footer">
-      <span>Free</span>
+    <div class="sidebar-footer" id="accountStatus">
+      <span class="badge">Free</span>
+      <button class="upgrade-btn hidden" onclick="goToUpgrade()">Upgrade</button>
     </div>
-
   </aside>
 
-  <!-- MAIN CHAT -->
+  <!-- CHAT AREA -->
   <main class="chat-area">
 
-    <div class="chat-header">
-      <span>TestimAI</span>
-    </div>
+    <header class="chat-header">
+      TestimAI
+    </header>
 
     <div id="messages" class="messages">
       <div class="assistant intro">
-        <h1 class="hero-text">What can I help with?</h1>
+        <h1>What can I help with?</h1>
       </div>
     </div>
 
-    <!-- INPUT AREA -->
-    <div class="input-wrapper">
+    <!-- INPUT -->
+    <div class="input-container">
 
-      <!-- file input -->
       <input type="file" id="imageInput" hidden />
 
-      <!-- input row -->
-      <div class="input-row">
+      <div class="input-box">
+        <button class="icon-btn" onclick="document.getElementById('imageInput').click()">+</button>
 
-        <!-- plus button -->
-        <button
-          class="icon-btn plus-btn"
-          onclick="document.getElementById('imageInput').click()"
-          aria-label="Upload image"
-        >
-          +
-        </button>
-
-        <!-- text input -->
-        <input
+        <textarea
           id="textInput"
-          placeholder="Paste a message or link to check if it’s a scam…"
-          autocomplete="off"
-        />
+          placeholder="Ask anything…"
+          rows="1"
+        ></textarea>
 
-        <!-- send button -->
-        <button class="send-btn" onclick="send()" aria-label="Send message">
-          ↑
-        </button>
-
+        <button class="send-btn" onclick="send()">➤</button>
       </div>
 
-      <!-- disclaimer -->
       <div class="disclaimer">
         TestimAI can make mistakes. Check important info.
       </div>
