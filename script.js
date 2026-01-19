@@ -9,7 +9,7 @@ if (!guestId) {
 /* -------------------------
    UI HELPERS
 -------------------------- */
-function addMessage(role, text) {
+function addMessage(role, text = "") {
   const messages = document.getElementById("messages");
 
   const div = document.createElement("div");
@@ -18,6 +18,8 @@ function addMessage(role, text) {
 
   messages.appendChild(div);
   messages.scrollTop = messages.scrollHeight;
+
+  return div; // 🔴 IMPORTANT for streaming
 }
 
 function showLoginModal() {
@@ -33,7 +35,7 @@ function enableUpgradeUI() {
 }
 
 /* -------------------------
-   SEND MESSAGE
+   SEND MESSAGE (STREAMING)
 -------------------------- */
 async function send() {
   const input = document.getElementById("textInput");
@@ -43,9 +45,12 @@ async function send() {
   input.value = "";
   addMessage("user", msg);
 
+  // Create empty assistant bubble FIRST (ChatGPT behavior)
+  const assistantDiv = addMessage("assistant", "");
+
   const token = localStorage.getItem("token");
 
-  const res = await fetch(`${API}/chat`, {
+  const res = await fetch(`${API}/chat-stream`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -57,14 +62,22 @@ async function send() {
     })
   });
 
-  const data = await res.json();
-
-  if (data.auth_required) {
+  // 🔴 AUTH CHECK (still works)
+  if (!res.body) {
     showLoginModal();
     return;
   }
 
-  addMessage("assistant", data.reply);
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+
+  while (true) {
+    const { value, done } = await reader.read();
+    if (done) break;
+
+    assistantDiv.innerText += decoder.decode(value);
+    assistantDiv.scrollIntoView({ behavior: "smooth", block: "end" });
+  }
 }
 
 /* -------------------------
@@ -81,7 +94,6 @@ textarea.addEventListener("keydown", (e) => {
 
 /* -------------------------
    LOGIN SUCCESS HANDLER
-   (called from login.html)
 -------------------------- */
 window.addEventListener("message", (e) => {
   if (e.data?.token) {
@@ -97,3 +109,4 @@ window.addEventListener("message", (e) => {
 function goToUpgrade() {
   alert("Upgrade coming soon (Paystack / Flutterwave)");
 }
+
