@@ -40,24 +40,30 @@
 
 <script>
 async function login() {
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
   const res = await fetch("https://testimai-frontend.onrender.com/auth/login", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      email: email.value,
-      password: password.value
-    })
+    body: JSON.stringify({ email, password })
   });
 
   const data = await res.json();
 
-  if (data.token) {
-    parent.postMessage({ token: data.token }, "*");
-  } else {
-    alert("Login failed");
+  if (!res.ok) {
+    alert(data.detail || "Login failed");
+    return;
   }
+
+  // 🔥 SEND TOKEN TO PARENT
+  window.parent.postMessage(
+    { token: data.access_token },
+    "*"
+  );
 }
 </script>
+
 
 </body>
 </html>
