@@ -1,15 +1,20 @@
+/* =========================
+   CONFIG
+========================= */
 const API = "https://testimai-backend.onrender.com";
 
-
+/* =========================
+   GUEST ID
+========================= */
 let guestId = localStorage.getItem("guest_id");
 if (!guestId) {
   guestId = crypto.randomUUID();
   localStorage.setItem("guest_id", guestId);
 }
 
-/* -------------------------
+/* =========================
    UI HELPERS
--------------------------- */
+========================= */
 function addMessage(role, text = "") {
   const messages = document.getElementById("messages");
 
@@ -20,7 +25,7 @@ function addMessage(role, text = "") {
   messages.appendChild(div);
   messages.scrollTop = messages.scrollHeight;
 
-  return div; // 🔴 IMPORTANT for streaming
+  return div; // important for streaming
 }
 
 function showLoginModal() {
@@ -32,12 +37,13 @@ function hideLoginModal() {
 }
 
 function enableUpgradeUI() {
-  document.querySelector(".upgrade-btn").classList.remove("hidden");
+  const btn = document.querySelector(".upgrade-btn");
+  if (btn) btn.classList.remove("hidden");
 }
 
-/* -------------------------
+/* =========================
    SEND MESSAGE (STREAMING)
--------------------------- */
+========================= */
 async function send() {
   const input = document.getElementById("textInput");
   const msg = input.value.trim();
@@ -46,25 +52,37 @@ async function send() {
   input.value = "";
   addMessage("user", msg);
 
-  // Create empty assistant bubble
+  // Create assistant bubble first (ChatGPT behavior)
   const assistantDiv = addMessage("assistant", "");
 
   const token = localStorage.getItem("token");
 
-  const res = await fetch(`${API}/chat-stream`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      ...(token && { Authorization: `Bearer ${token}` })
-    },
-    body: JSON.stringify({
-      message: msg,
-      guest_id: guestId
-    })
-  });
+  let res;
+  try {
+    res = await fetch(`${API}/chat/chat-stream`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...(token && { Authorization: `Bearer ${token}` })
+      },
+      body: JSON.stringify({
+        message: msg,
+        guest_id: guestId
+      })
+    });
+  } catch (err) {
+    assistantDiv.innerText = "Connection error. Please try again.";
+    return;
+  }
 
-  // 🔴 HARD AUTH FAIL (401 / 403)
+  // HARD AUTH FAIL
   if (res.status === 401 || res.status === 403) {
+    assistantDiv.remove();
+    showLoginModal();
+    return;
+  }
+
+  if (!res.body) {
     assistantDiv.remove();
     showLoginModal();
     return;
@@ -72,7 +90,6 @@ async function send() {
 
   const reader = res.body.getReader();
   const decoder = new TextDecoder();
-
   let fullText = "";
 
   while (true) {
@@ -82,7 +99,7 @@ async function send() {
     const chunk = decoder.decode(value);
     fullText += chunk;
 
-    // 🔴 STREAM AUTH BLOCK DETECTION
+    // AUTH BLOCK DETECTION FROM STREAM
     if (fullText.toLowerCase().includes("please sign in")) {
       assistantDiv.remove();
       showLoginModal();
@@ -94,10 +111,9 @@ async function send() {
   }
 }
 
-
-/* -------------------------
+/* =========================
    ENTER KEY SUPPORT
--------------------------- */
+========================= */
 const textarea = document.getElementById("textInput");
 
 textarea.addEventListener("keydown", (e) => {
@@ -107,21 +123,31 @@ textarea.addEventListener("keydown", (e) => {
   }
 });
 
-/* -------------------------
+/* =========================
    LOGIN SUCCESS HANDLER
--------------------------- */
+========================= */
+/*
+  Your login page / iframe must do:
+  window.postMessage({ token: "JWT_TOKEN_HERE" }, "*")
+*/
 window.addEventListener("message", (e) => {
-  if (e.data?.token) {
+  if (e.data && e.data.token) {
     localStorage.setItem("token", e.data.token);
     hideLoginModal();
     enableUpgradeUI();
   }
 });
 
-/* -------------------------
-   UPGRADE
--------------------------- */
+/* =========================
+   UPGRADE BUTTON
+========================= */
 function goToUpgrade() {
-  alert("Upgrade coming soon (Paystack / Flutterwave)");
+  alert("Upgrade coming soon (Paystack enabled)");
 }
 
+/* =========================
+   AUTO SHOW UPGRADE IF LOGGED IN
+========================= */
+if (localStorage.getItem("token")) {
+  enableUpgradeUI();
+}
