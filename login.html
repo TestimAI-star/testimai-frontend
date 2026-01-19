@@ -40,8 +40,13 @@
 
 <script>
 async function login() {
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
+
+  if (!email || !password) {
+    alert("Email and password required");
+    return;
+  }
 
   const res = await fetch(
     "https://testimai-backend.onrender.com/auth/login",
@@ -54,22 +59,23 @@ async function login() {
     }
   );
 
-  // 🔴 IMPORTANT: CHECK STATUS FIRST
+  // ✅ SAFE ERROR HANDLING
   if (!res.ok) {
-    const text = await res.text();
-    alert("Login failed: " + text);
+    const errorText = await res.text();
+    alert("Login failed: " + errorText);
     return;
   }
 
   const data = await res.json();
 
-  // ✅ SEND TOKEN TO PARENT (VERY IMPORTANT)
+  // ✅ SEND TOKEN TO PARENT PAGE
   window.parent.postMessage(
     { token: data.token },
     "*"
   );
 }
 </script>
+
 
 
 
