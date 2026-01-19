@@ -1,4 +1,5 @@
-const API = "https://testimai-frontend.onrender.com";
+const API = "https://testimai-backend.onrender.com";
+
 
 let guestId = localStorage.getItem("guest_id");
 if (!guestId) {
