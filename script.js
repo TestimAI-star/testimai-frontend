@@ -46,7 +46,7 @@ async function send() {
   input.value = "";
   addMessage("user", msg);
 
-  // Create empty assistant bubble FIRST (ChatGPT behavior)
+  // Create empty assistant bubble
   const assistantDiv = addMessage("assistant", "");
 
   const token = localStorage.getItem("token");
@@ -63,8 +63,9 @@ async function send() {
     })
   });
 
-  // 🔴 AUTH CHECK (still works)
-  if (!res.body) {
+  // 🔴 HARD AUTH FAIL (401 / 403)
+  if (res.status === 401 || res.status === 403) {
+    assistantDiv.remove();
     showLoginModal();
     return;
   }
@@ -72,14 +73,27 @@ async function send() {
   const reader = res.body.getReader();
   const decoder = new TextDecoder();
 
+  let fullText = "";
+
   while (true) {
     const { value, done } = await reader.read();
     if (done) break;
 
-    assistantDiv.innerText += decoder.decode(value);
+    const chunk = decoder.decode(value);
+    fullText += chunk;
+
+    // 🔴 STREAM AUTH BLOCK DETECTION
+    if (fullText.toLowerCase().includes("please sign in")) {
+      assistantDiv.remove();
+      showLoginModal();
+      return;
+    }
+
+    assistantDiv.innerText = fullText;
     assistantDiv.scrollIntoView({ behavior: "smooth", block: "end" });
   }
 }
+
 
 /* -------------------------
    ENTER KEY SUPPORT
