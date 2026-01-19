@@ -1,28 +1,48 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Login – TestimAI</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <title>Login</title>
+  <style>
+    body {
+      background: #121212;
+      color: white;
+      font-family: system-ui;
+      padding: 30px;
+    }
+    h2 { margin-bottom: 20px; }
+    input, button {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 12px;
+      border-radius: 8px;
+      border: none;
+    }
+    input {
+      background: #1e1e1e;
+      color: white;
+    }
+    button {
+      background: #10a37f;
+      color: white;
+      cursor: pointer;
+    }
+  </style>
 </head>
-<body class="login-body">
+<body>
 
-<div class="login-box">
-  <h2>Sign in to continue</h2>
+<h2>Sign in to TestimAI</h2>
 
-  <input id="email" type="email" placeholder="Email">
-  <input id="password" type="password" placeholder="Password">
+<input id="email" placeholder="Email">
+<input id="password" type="password" placeholder="Password">
 
-  <button onclick="login()">Login</button>
-  <button class="secondary" onclick="signup()">Sign up</button>
-</div>
+<button onclick="login()">Continue</button>
 
 <script>
-const API = "https://YOUR_RENDER_URL";
-
 async function login() {
-  const res = await fetch(`${API}/auth/login`, {
+  const res = await fetch("https://testimai-frontend.onrender.com/auth/login", {
     method: "POST",
-    headers: {"Content-Type":"application/json"},
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       email: email.value,
       password: password.value
@@ -30,23 +50,12 @@ async function login() {
   });
 
   const data = await res.json();
-  localStorage.setItem("token", data.token);
-  parent.hideLoginModal();
-}
 
-async function signup() {
-  const res = await fetch(`${API}/auth/signup`, {
-    method: "POST",
-    headers: {"Content-Type":"application/json"},
-    body: JSON.stringify({
-      email: email.value,
-      password: password.value
-    })
-  });
-
-  const data = await res.json();
-  localStorage.setItem("token", data.token);
-  parent.hideLoginModal();
+  if (data.token) {
+    parent.postMessage({ token: data.token }, "*");
+  } else {
+    alert("Login failed");
+  }
 }
 </script>
 
