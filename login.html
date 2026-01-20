@@ -7,54 +7,46 @@
     body {
       font-family: system-ui, sans-serif;
       background: #0f0f10;
+      color: #fff;
       display: flex;
       align-items: center;
       justify-content: center;
       height: 100vh;
-      color: white;
     }
-
     .box {
       background: #171717;
       padding: 24px;
       width: 320px;
       border-radius: 12px;
     }
-
     input {
       width: 100%;
       padding: 10px;
       margin-bottom: 12px;
-      background: #1f1f1f;
+      background: #222;
       border: none;
       color: white;
-      border-radius: 6px;
     }
-
     button {
       width: 100%;
       padding: 10px;
-      background: white;
+      background: #10a37f;
       color: black;
       border: none;
       cursor: pointer;
-      border-radius: 6px;
-      margin-bottom: 8px;
+      font-weight: 600;
     }
-
-    .toggle {
-      background: none;
-      color: #aaa;
+    .link {
+      margin-top: 12px;
       font-size: 13px;
+      color: #aaa;
       cursor: pointer;
-      border: none;
+      text-align: center;
     }
-
     .msg {
       font-size: 13px;
       margin-top: 10px;
       color: #ff6b6b;
-      min-height: 16px;
     }
   </style>
 </head>
@@ -63,59 +55,81 @@
 <div class="box">
   <h3 id="title">Login to TestimAI</h3>
 
-  <input id="email" placeholder="Email" />
-  <input id="password" type="password" placeholder="Password" />
+  <input id="email" placeholder="Email">
+  <input id="password" type="password" placeholder="Password">
 
-  <button onclick="submit()">Continue</button>
-  <button class="toggle" onclick="toggleMode()">Switch to Sign up</button>
+  <button onclick="submitAuth()">Continue</button>
+
+  <div class="link" onclick="toggleMode()" id="toggle">
+    Switch to Sign up
+  </div>
 
   <div id="msg" class="msg"></div>
 </div>
 
 <script>
 const API = "https://testimai-backend.onrender.com";
-let mode = "login";
+let mode = "login"; // login | signup
 
 function toggleMode() {
-  mode = mode === "login" ? "signup" : "login";
-  document.getElementById("title").innerText =
-    mode === "login" ? "Login to TestimAI" : "Create TestimAI account";
+  const title = document.getElementById("title");
+  const toggle = document.getElementById("toggle");
+  const msg = document.getElementById("msg");
+  msg.innerText = "";
+
+  if (mode === "login") {
+    mode = "signup";
+    title.innerText = "Create a TestimAI account";
+    toggle.innerText = "Login to another account";
+  } else {
+    mode = "login";
+    title.innerText = "Login to TestimAI";
+    toggle.innerText = "Switch to Sign up";
+  }
 }
 
-async function submit() {
-  const email = emailInput();
-  const password = passwordInput();
+async function submitAuth() {
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
   const msg = document.getElementById("msg");
 
   msg.innerText = "";
 
-  const endpoint = mode === "login" ? "/auth/login" : "/auth/signup";
+  if (!email || !password) {
+    msg.innerText = "Email and password required";
+    return;
+  }
 
-  const res = await fetch(API + endpoint, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password })
-  });
+  const endpoint =
+    mode === "login" ? "/auth/login" : "/auth/signup";
+
+  let res;
+  try {
+    res = await fetch(API + endpoint, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password })
+    });
+  } catch {
+    msg.innerText = "Network error";
+    return;
+  }
 
   if (!res.ok) {
-    msg.innerText = "Authentication failed";
+    msg.innerText =
+      mode === "login"
+        ? "Authentication failed"
+        : "Account already exists";
     return;
   }
 
   const data = await res.json();
 
+  // send token to main app
   window.parent.postMessage(
     { token: data.token, is_pro: data.is_pro },
     "*"
   );
-}
-
-function emailInput() {
-  return document.getElementById("email").value.trim();
-}
-
-function passwordInput() {
-  return document.getElementById("password").value.trim();
 }
 </script>
 
