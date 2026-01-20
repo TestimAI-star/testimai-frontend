@@ -13,6 +13,11 @@ if (!guestId) {
 }
 
 /* =========================
+   STATE
+========================= */
+let pendingMessage = null;
+
+/* =========================
    UI HELPERS
 ========================= */
 function addMessage(role, text = "") {
@@ -25,7 +30,7 @@ function addMessage(role, text = "") {
   messages.appendChild(div);
   messages.scrollTop = messages.scrollHeight;
 
-  return div; // important for streaming
+  return div; // for streaming
 }
 
 function showLoginModal() {
@@ -39,6 +44,9 @@ function hideLoginModal() {
 function enableUpgradeUI() {
   const btn = document.querySelector(".upgrade-btn");
   if (btn) btn.classList.remove("hidden");
+
+  const badge = document.querySelector(".badge");
+  if (badge) badge.innerText = "Free";
 }
 
 /* =========================
@@ -52,7 +60,10 @@ async function send() {
   input.value = "";
   addMessage("user", msg);
 
-  // Create assistant bubble first (ChatGPT behavior)
+  // Save message in case login is required
+  pendingMessage = msg;
+
+  // Create assistant placeholder
   const assistantDiv = addMessage("assistant", "");
 
   const token = localStorage.getItem("token");
@@ -75,14 +86,8 @@ async function send() {
     return;
   }
 
-  // HARD AUTH FAIL
-  if (res.status === 401 || res.status === 403) {
-    assistantDiv.remove();
-    showLoginModal();
-    return;
-  }
-
-  if (!res.body) {
+  // AUTH REQUIRED
+  if (res.status === 401 || res.status === 403 || !res.body) {
     assistantDiv.remove();
     showLoginModal();
     return;
@@ -99,8 +104,8 @@ async function send() {
     const chunk = decoder.decode(value);
     fullText += chunk;
 
-    // AUTH BLOCK DETECTION FROM STREAM
-    if (fullText.toLowerCase().includes("please sign in")) {
+    // Detect auth block mid-stream
+    if (fullText.toLowerCase().includes("sign in")) {
       assistantDiv.remove();
       showLoginModal();
       return;
@@ -109,6 +114,9 @@ async function send() {
     assistantDiv.innerText = fullText;
     assistantDiv.scrollIntoView({ behavior: "smooth", block: "end" });
   }
+
+  // Message completed successfully
+  pendingMessage = null;
 }
 
 /* =========================
@@ -126,15 +134,21 @@ textarea.addEventListener("keydown", (e) => {
 /* =========================
    LOGIN SUCCESS HANDLER
 ========================= */
-/*
-  Your login page / iframe must do:
-  window.postMessage({ token: "JWT_TOKEN_HERE" }, "*")
-*/
 window.addEventListener("message", (e) => {
-  if (e.data && e.data.token) {
-    localStorage.setItem("token", e.data.token);
-    hideLoginModal();
-    enableUpgradeUI();
+  if (!e.data || !e.data.token) return;
+
+  // Save token
+  localStorage.setItem("token", e.data.token);
+
+  hideLoginModal();
+  enableUpgradeUI();
+
+  // Retry message after successful login
+  if (pendingMessage) {
+    const msg = pendingMessage;
+    pendingMessage = null;
+    document.getElementById("textInput").value = msg;
+    send();
   }
 });
 
@@ -146,7 +160,7 @@ function goToUpgrade() {
 }
 
 /* =========================
-   AUTO SHOW UPGRADE IF LOGGED IN
+   AUTO-ENABLE UPGRADE UI
 ========================= */
 if (localStorage.getItem("token")) {
   enableUpgradeUI();
