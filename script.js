@@ -30,7 +30,7 @@ function addMessage(role, text = "") {
   messages.appendChild(div);
   messages.scrollTop = messages.scrollHeight;
 
-  return div; // for streaming
+  return div;
 }
 
 function showLoginModal() {
@@ -60,10 +60,7 @@ async function send() {
   input.value = "";
   addMessage("user", msg);
 
-  // Save message in case login is required
   pendingMessage = msg;
-
-  // Create assistant placeholder
   const assistantDiv = addMessage("assistant", "");
 
   const token = localStorage.getItem("token");
@@ -74,7 +71,7 @@ async function send() {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        ...(token && { Authorization: `Bearer ${token}` })
+        ...(token ? { Authorization: `Bearer ${token}` } : {})
       },
       body: JSON.stringify({
         message: msg,
@@ -82,11 +79,11 @@ async function send() {
       })
     });
   } catch (err) {
+    console.error("Network error:", err);
     assistantDiv.innerText = "Connection error. Please try again.";
     return;
   }
 
-  // AUTH REQUIRED
   if (res.status === 401 || res.status === 403 || !res.body) {
     assistantDiv.remove();
     showLoginModal();
@@ -97,25 +94,28 @@ async function send() {
   const decoder = new TextDecoder();
   let fullText = "";
 
-  while (true) {
-    const { value, done } = await reader.read();
-    if (done) break;
+  try {
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
 
-    const chunk = decoder.decode(value);
-    fullText += chunk;
+      const chunk = decoder.decode(value, { stream: true });
+      fullText += chunk;
 
-    // Detect auth block mid-stream
-    if (fullText.toLowerCase().includes("sign in")) {
-      assistantDiv.remove();
-      showLoginModal();
-      return;
+      if (fullText.toLowerCase().includes("sign in")) {
+        assistantDiv.remove();
+        showLoginModal();
+        return;
+      }
+
+      assistantDiv.innerText = fullText;
+      assistantDiv.scrollIntoView({ behavior: "smooth", block: "end" });
     }
-
-    assistantDiv.innerText = fullText;
-    assistantDiv.scrollIntoView({ behavior: "smooth", block: "end" });
+  } catch (err) {
+    console.error("Stream error:", err);
+    assistantDiv.innerText = "Stream interrupted. Try again.";
   }
 
-  // Message completed successfully
   pendingMessage = null;
 }
 
@@ -123,7 +123,6 @@ async function send() {
    ENTER KEY SUPPORT
 ========================= */
 const textarea = document.getElementById("textInput");
-
 textarea.addEventListener("keydown", (e) => {
   if (e.key === "Enter" && !e.shiftKey) {
     e.preventDefault();
@@ -137,13 +136,10 @@ textarea.addEventListener("keydown", (e) => {
 window.addEventListener("message", (e) => {
   if (!e.data || !e.data.token) return;
 
-  // Save token
   localStorage.setItem("token", e.data.token);
-
   hideLoginModal();
   enableUpgradeUI();
 
-  // Retry message after successful login
   if (pendingMessage) {
     const msg = pendingMessage;
     pendingMessage = null;
