@@ -2,103 +2,120 @@
 <html>
 <head>
   <meta charset="UTF-8" />
-  <title>Login – TestimAI</title>
+  <title>Auth – TestimAI</title>
   <style>
     body {
       font-family: system-ui, sans-serif;
-      background: #f7f7f7;
+      background: #0f0f10;
       display: flex;
       align-items: center;
       justify-content: center;
       height: 100vh;
+      color: white;
     }
 
     .box {
-      background: white;
+      background: #171717;
       padding: 24px;
-      width: 300px;
-      border-radius: 10px;
-      box-shadow: 0 10px 25px rgba(0,0,0,.1);
+      width: 320px;
+      border-radius: 12px;
     }
 
     input {
       width: 100%;
       padding: 10px;
       margin-bottom: 12px;
+      background: #1f1f1f;
+      border: none;
+      color: white;
+      border-radius: 6px;
     }
 
     button {
       width: 100%;
       padding: 10px;
-      background: black;
-      color: white;
+      background: white;
+      color: black;
       border: none;
       cursor: pointer;
+      border-radius: 6px;
+      margin-bottom: 8px;
+    }
+
+    .toggle {
+      background: none;
+      color: #aaa;
+      font-size: 13px;
+      cursor: pointer;
+      border: none;
     }
 
     .msg {
       font-size: 13px;
       margin-top: 10px;
-      color: red;
+      color: #ff6b6b;
+      min-height: 16px;
     }
   </style>
 </head>
 <body>
 
 <div class="box">
-  <h3>Sign in to TestimAI</h3>
+  <h3 id="title">Login to TestimAI</h3>
 
   <input id="email" placeholder="Email" />
   <input id="password" type="password" placeholder="Password" />
 
-  <button onclick="login()">Continue</button>
+  <button onclick="submit()">Continue</button>
+  <button class="toggle" onclick="toggleMode()">Switch to Sign up</button>
 
   <div id="msg" class="msg"></div>
 </div>
 
 <script>
 const API = "https://testimai-backend.onrender.com";
+let mode = "login";
 
-async function login() {
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value.trim();
+function toggleMode() {
+  mode = mode === "login" ? "signup" : "login";
+  document.getElementById("title").innerText =
+    mode === "login" ? "Login to TestimAI" : "Create TestimAI account";
+}
+
+async function submit() {
+  const email = emailInput();
+  const password = passwordInput();
   const msg = document.getElementById("msg");
 
   msg.innerText = "";
 
-  if (!email || !password) {
-    msg.innerText = "Enter email and password";
-    return;
-  }
+  const endpoint = mode === "login" ? "/auth/login" : "/auth/signup";
 
-  // 1️⃣ TRY LOGIN
-  let res = await fetch(`${API}/auth/login`, {
+  const res = await fetch(API + endpoint, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, password })
   });
 
-  // 2️⃣ IF LOGIN FAILS → AUTO SIGNUP
   if (!res.ok) {
-    res = await fetch(`${API}/auth/signup`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password })
-    });
-
-    if (!res.ok) {
-      msg.innerText = "Login failed";
-      return;
-    }
+    msg.innerText = "Authentication failed";
+    return;
   }
 
   const data = await res.json();
 
-  // 3️⃣ SEND TOKEN TO PARENT (MAIN APP)
   window.parent.postMessage(
     { token: data.token, is_pro: data.is_pro },
     "*"
   );
+}
+
+function emailInput() {
+  return document.getElementById("email").value.trim();
+}
+
+function passwordInput() {
+  return document.getElementById("password").value.trim();
 }
 </script>
 
