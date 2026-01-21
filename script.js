@@ -67,7 +67,7 @@ async function send() {
 
   let res;
   try {
-    res = await fetch(`${API}/chat/chat-stream`, {
+    res = await fetch(`${API}/chat/stream`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
