@@ -1,137 +1,18 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8" />
-  <title>Auth – TestimAI</title>
-  <style>
-    body {
-      font-family: system-ui, sans-serif;
-      background: #0f0f10;
-      color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-    }
-    .box {
-      background: #171717;
-      padding: 24px;
-      width: 320px;
-      border-radius: 12px;
-    }
-    input {
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 12px;
-      background: #222;
-      border: none;
-      color: white;
-    }
-    button {
-      width: 100%;
-      padding: 10px;
-      background: #10a37f;
-      color: black;
-      border: none;
-      cursor: pointer;
-      font-weight: 600;
-    }
-    .link {
-      margin-top: 12px;
-      font-size: 13px;
-      color: #aaa;
-      cursor: pointer;
-      text-align: center;
-    }
-    .msg {
-      font-size: 13px;
-      margin-top: 10px;
-      color: #ff6b6b;
-    }
-  </style>
-</head>
-<body>
-
-<div class="box">
-  <h3 id="title">Login to TestimAI</h3>
-
-  <input id="email" placeholder="Email">
-  <input id="password" type="password" placeholder="Password">
-
-  <button onclick="submitAuth()">Continue</button>
-
-  <div class="link" onclick="toggleMode()" id="toggle">
-    Switch to Sign up
-  </div>
-
-  <div id="msg" class="msg"></div>
-</div>
-
-<script>
-const API = "https://testimai-backend.onrender.com";
-let mode = "login"; // login | signup
-
-function toggleMode() {
-  const title = document.getElementById("title");
-  const toggle = document.getElementById("toggle");
-  const msg = document.getElementById("msg");
-  msg.innerText = "";
-
-  if (mode === "login") {
-    mode = "signup";
-    title.innerText = "Create a TestimAI account";
-    toggle.innerText = "Login to another account";
-  } else {
-    mode = "login";
-    title.innerText = "Login to TestimAI";
-    toggle.innerText = "Switch to Sign up";
+<style>
+  body { background: #0B0E14; color: white; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+  .box { 
+    background: rgba(255,255,255,0.03); 
+    padding: 30px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); 
+    width: 350px; text-align: center;
+    backdrop-filter: blur(10px);
   }
-}
-
-async function submitAuth() {
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value.trim();
-  const msg = document.getElementById("msg");
-
-  msg.innerText = "";
-
-  if (!email || !password) {
-    msg.innerText = "Email and password required";
-    return;
+  input { 
+    width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; 
+    background: #1A1D26; border: 1px solid #333; color: white;
   }
-
-  const endpoint =
-    mode === "login" ? "/auth/login" : "/auth/signup";
-
-  let res;
-  try {
-    res = await fetch(API + endpoint, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password })
-    });
-  } catch {
-    msg.innerText = "Network error";
-    return;
+  button { 
+    width: 100%; padding: 12px; background: #8B5CF6; border: none; 
+    border-radius: 8px; color: white; font-weight: bold; cursor: pointer;
   }
-
-  if (!res.ok) {
-    msg.innerText =
-      mode === "login"
-        ? "Authentication failed"
-        : "Account already exists";
-    return;
-  }
-
-  const data = await res.json();
-
-  // send token to main app
-  window.parent.postMessage(
-    { token: data.token, is_pro: data.is_pro },
-    "*"
-  );
-}
-</script>
-
-</body>
-</html>
+  .link { color: #06B6D4; font-size: 14px; margin-top: 15px; cursor: pointer; }
+</style>
